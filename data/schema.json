@@ -1,0 +1,59 @@
+{
+  "merchants": {
+    "key": "id",
+    "columns": {
+      "id": "text",
+      "group": "text",
+      "entry_month": "text",
+      "exit_month": "text?"
+    },
+    "description": "退出月为不再经营的首月，入场月为首个经营月，不完整观察不同于退出。",
+    "references": {}
+  },
+  "purchases": {
+    "key": "id",
+    "columns": {
+      "id": "text",
+      "merchant_id": "text",
+      "month": "text",
+      "species": "text",
+      "grade": "text",
+      "quantity_kg": "number",
+      "unit_price": "money"
+    },
+    "description": "采购公斤数与元每公斤价格，支出由数量乘单价形成；未观察月没有虚构零采购行。",
+    "references": {
+      "merchant_id": "merchants.id"
+    }
+  },
+  "price_reference": {
+    "key": "id",
+    "columns": {
+      "id": "text",
+      "month": "text",
+      "species": "text",
+      "grade": "text",
+      "unit_price": "money",
+      "reference_kind": "text"
+    },
+    "description": "同品规参考价格，可用于固定篮子比较，不声称是未经价格变化的反事实。",
+    "references": {}
+  },
+  "panel_design": {
+    "key": "id",
+    "columns": {
+      "id": "text",
+      "merchant_id": "text",
+      "month": "text",
+      "weight": "number",
+      "observed": "bool",
+      "days_open": "int",
+      "stratum": "text",
+      "cluster": "text"
+    },
+    "description": "月度总体权重、回收标记、实际经营日数及抽样层簇，商户跨月重复观测。",
+    "references": {
+      "merchant_id": "merchants.id"
+    }
+  }
+}
