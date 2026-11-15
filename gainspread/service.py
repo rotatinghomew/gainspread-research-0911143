@@ -5,6 +5,7 @@ from urllib.parse import parse_qs, urlsplit
 from .cases import CaseStore
 from .catalog import Catalog
 from .domain import overview
+from .panel import DEFAULT_BOTTOM_QUANTILE, REFERENCE_MODES, build_panel_analysis
 from .profile import numeric_profiles
 
 
@@ -34,6 +35,17 @@ class Application:
                 return 200, {"source_fingerprint": self.catalog.fingerprint, "view": overview(self.catalog)}
             if method == "GET" and path == "/profiles":
                 return 200, {"source_fingerprint": self.catalog.fingerprint, "profiles": numeric_profiles(self.catalog)}
+            if method == "GET" and path == "/panel":
+                base = query.get("base", [None])[0]
+                current = query.get("current", [None])[0]
+                reference_mode = query.get("reference", ["matched"])[0]
+                weight_field = query.get("weight", ["weight_design"])[0]
+                try:
+                    bottom_quantile = float(query.get("bottom", [str(DEFAULT_BOTTOM_QUANTILE)])[0])
+                except ValueError:
+                    raise ValueError("底部比例应为 0 与 1 之间的数值")
+                return 200, build_panel_analysis(self.catalog, base, current, reference_mode,
+                                                 weight_field, bottom_quantile)
             if method == "GET" and path == "/cases":
                 return 200, {"cases": self.cases.list()}
             if method == "GET" and path.startswith("/cases/"):

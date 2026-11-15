@@ -16,6 +16,16 @@ def main():
             for path in ("/health", "/tables", "/view"):
                 with urlopen(base + path, timeout=5) as response:
                     print(path, json.dumps(json.load(response), ensure_ascii=False))
+            with urlopen(base + "/panel?base=2026-07&current=2026-10", timeout=5) as response:
+                panel = json.load(response)
+            print("/panel", json.dumps({
+                "base_merchants": panel["base"]["aggregate"]["merchant_count"],
+                "current_merchants": panel["current"]["aggregate"]["merchant_count"],
+                "current_negative_savings": panel["distribution_indicators"]["current"][
+                    "total_savings"]["negative_count"],
+                "gini_applicable": panel["distribution_indicators"]["gini"][
+                    "current_total_savings"]["applicable"],
+            }, ensure_ascii=False))
             request = Request(base + "/cases", data=json.dumps({"label": "月度经营讨论", "options": {"period": "2026-09"}}, ensure_ascii=False).encode(), headers={"Content-Type": "application/json"})
             with urlopen(request, timeout=5) as response:
                 created = json.load(response)
